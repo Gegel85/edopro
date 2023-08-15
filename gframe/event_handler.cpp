@@ -2475,6 +2475,29 @@ bool CheckHand(const irr::core::vector2d<irr::s32>& mouse, const std::vector<Cli
 	return rect.isPointInside(mouse);
 }
 
+bool CheckChains(const irr::core::vector2d<irr::s32>& mouse, size_t nbChains) {
+	while (nbChains && mainGame->dField.chains[nbChains - 1].solved)
+		nbChains--;
+	if (!nbChains)
+		return false;
+
+	auto botRight = mainGame->Resize(1000, 50 + 32 * (int)(nbChains - 1));
+	auto topLeft = irr::core::vector2di{
+		botRight.X - 100,
+		mainGame->Resize(1000, 50).Y
+	};
+
+	if (mouse.X < topLeft.X + 8)
+		return false;
+	if (mouse.X >= topLeft.X + 96 - 8)
+		return false;
+	if (mouse.Y < topLeft.Y + 8)
+		return false;
+	if (mouse.Y >= botRight.Y + 96 - 8)
+		return false;
+	return true;
+}
+
 void ClientField::GetHoverField(const irr::core::vector2d<irr::s32>& mouse) {
 	const int three_columns = mainGame->dInfo.HasFieldFlag(DUEL_3_COLUMNS_FIELD);
 	const int not_separate_pzones = !mainGame->dInfo.HasFieldFlag(DUEL_SEPARATE_PZONE);
@@ -2491,13 +2514,33 @@ void ClientField::GetHoverField(const irr::core::vector2d<irr::s32>& mouse) {
 	} else if(CheckHand(mouse, hand[1])) {
 		hovered_controler = 1;
 		hovered_location = LOCATION_HAND;
-		for(auto it = hand[1].begin(); it != hand[1].end(); it++) {
-			if((*it)->hand_collision.isPointInside(mouse)) {
+		for (auto it = hand[1].begin(); it != hand[1].end(); it++) {
+			if ((*it)->hand_collision.isPointInside(mouse)) {
 				hovered_sequence = (*it)->sequence;
 				return;
 			}
 		}
 		hovered_location = 0;
+	} else if(CheckChains(mouse, mainGame->dField.chains.size())) {
+		auto pos = mainGame->Resize(mouse.X, mouse.Y, true);
+		unsigned index = (pos.Y - 50) / 32;
+
+		if (index >= mainGame->dField.chains.size())
+			index = mainGame->dField.chains.size() - 1;
+		while (index && mainGame->dField.chains[index].solved)
+			index--;
+
+		const auto &chain = mainGame->dField.chains[index];
+
+		if (chain.chain_card) {
+			hovered_location = chain.chain_card->location;
+			hovered_controler = chain.chain_card->controler;
+			hovered_sequence = chain.chain_card->sequence;
+		} else {
+			hovered_location = chain.location;
+			hovered_controler = chain.controler;
+			hovered_sequence = chain.sequence;
+		}
 	} else {
 		const auto coords = MouseToField(mouse);
 		const auto& boardx = coords.X;
