@@ -1553,7 +1553,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			uint8_t mplayer = 2;
 			if(!panel || !panel->isVisible() || !panel->getRelativePosition().isPointInside(mousepos)) {
 				GetHoverField(mousepos);
-				if(hovered_location & 0xe)
+				if((hovered_location & 0xe) || force_show_card)
 					mcard = GetCard(hovered_controler, hovered_location, hovered_sequence);
 				else if(hovered_location == LOCATION_GRAVE) {
 					if(grave[hovered_controler].size())
@@ -1582,7 +1582,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			}
 			if(hovered_location == LOCATION_HAND && (mainGame->dInfo.is_shuffling || mainGame->dInfo.curMsg == MSG_SHUFFLE_HAND))
 				mcard = 0;
-			if(mcard == 0 && mplayer > 1)
+			if(mcard == 0 && mplayer > 1 && !force_show_card)
 				should_show_tip = false;
 			else if(mcard == hovered_card && mplayer == hovered_player) {
 				if(mainGame->stTip->isVisible()) {
@@ -1613,7 +1613,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					SetShowMark(mcard, true);
 					if(mcard->code) {
 						mainGame->ShowCardInfo(mcard->code);
-						if(mcard->location & (0xe|0x400)) {
+						if((mcard->location & (0xe|0x400)) || force_show_card) {
 							std::wstring str(gDataManager->GetName(mcard->code));
 							if(mcard->type & TYPE_MONSTER) {
 								if(mcard->alias && (mcard->alias < mcard->code - 10 || mcard->alias > mcard->code + 10)
@@ -2514,8 +2514,8 @@ void ClientField::GetHoverField(const irr::core::vector2d<irr::s32>& mouse) {
 	} else if(CheckHand(mouse, hand[1])) {
 		hovered_controler = 1;
 		hovered_location = LOCATION_HAND;
-		for (auto it = hand[1].begin(); it != hand[1].end(); it++) {
-			if ((*it)->hand_collision.isPointInside(mouse)) {
+		for(auto it = hand[1].begin(); it != hand[1].end(); it++) {
+			if((*it)->hand_collision.isPointInside(mouse)) {
 				hovered_sequence = (*it)->sequence;
 				return;
 			}
@@ -2532,6 +2532,7 @@ void ClientField::GetHoverField(const irr::core::vector2d<irr::s32>& mouse) {
 
 		const auto &chain = mainGame->dField.chains[index];
 
+		force_show_card = true;
 		if (chain.chain_card) {
 			hovered_location = chain.chain_card->location;
 			hovered_controler = chain.chain_card->controler;

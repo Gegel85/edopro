@@ -135,6 +135,7 @@ public:
 	ClientCard* command_card;
 	ClientCard* highlighting_card;
 	uint16_t list_command;
+	bool force_show_card = false;
 
 	virtual bool OnEvent(const irr::SEvent& event);
 	virtual bool OnCommonEvent(const irr::SEvent& event, bool& stopPropagation);
