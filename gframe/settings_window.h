@@ -100,6 +100,7 @@ struct SettingsWindow {
 	irr::gui::IGUICheckBox* chkScaleBackground;
 	irr::gui::IGUICheckBox* chkAccurateBackgroundResize;
 	irr::gui::IGUICheckBox* chkDrawFieldSpells;
+	irr::gui::IGUICheckBox* chkDrawChainSeparately;
 	irr::gui::IGUIStaticText* stAntiAlias;
 	irr::gui::IGUIEditBox* ebAntiAlias;
 	irr::gui::IGUIStaticText* stVSync;

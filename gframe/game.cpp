@@ -1673,6 +1673,9 @@ void Game::PopulateSettingsWindow() {
 		gSettings.chkKeepCardRatio = env->addCheckBox(gGameConfig->keep_cardinfo_aspect_ratio, GetNextRect(), sPanel, CHECKBOX_KEEP_CARD_ASPECT_RATIO, gDataManager->GetSysString(2095).data());
 		defaultStrings.emplace_back(gSettings.chkKeepCardRatio, 2095);
 
+		gSettings.chkDrawChainSeparately = env->addCheckBox(gGameConfig->draw_chain_separately, GetNextRect(), sPanel, CHECKBOX_DRAW_CHAIN_SEPARATELY, gDataManager->GetSysString(1469).data());
+		defaultStrings.emplace_back(gSettings.chkDrawChainSeparately, 1469);
+		menuHandler.MakeElementSynchronized(gSettings.chkDrawChainSeparately);
 		gSettings.chkAlternativePhaseLayout = env->addCheckBox(gGameConfig->alternative_phase_layout, GetNextRect(), sPanel, CHECKBOX_ALTERNATIVE_PHASE_LAYOUT, gDataManager->GetSysString(1298).data());
 		menuHandler.MakeElementSynchronized(gSettings.chkAlternativePhaseLayout);
 		defaultStrings.emplace_back(gSettings.chkAlternativePhaseLayout, 1298);

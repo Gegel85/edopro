@@ -872,43 +872,44 @@ void Game::DrawGUI() {
 
 	irr::video::SColor colors[4];
 
-	for(size_t i = 0; i < dField.chains.size(); ++i) {
-		const auto& chain = dField.chains[i];
-		if(chain.solved)
-			continue;
+	if (gGameConfig->draw_chain_separately)
+		for(size_t i = 0; i < dField.chains.size(); ++i) {
+			const auto& chain = dField.chains[i];
+			if(chain.solved)
+				continue;
 
-		auto factor = std::pow(0.85, dField.chains.size() - i);
-		irr::core::vector2di base_pos = Resize(1000, 50 + 32 * i);
-		base_pos.X -= 100;
-		irr::core::recti chain_rect = {{base_pos.X, base_pos.Y}, {base_pos.X + 96, base_pos.Y + 96}};
-		irr::core::recti number_rect = {{base_pos.X + 24, base_pos.Y + 24}, {base_pos.X + 48 + 24, base_pos.Y + 48 + 24}};
-		irr::core::vector2di center = {base_pos.X + 48, base_pos.Y + 48};
-		irr::core::vector2df scale = {0.75f, 0.75f};
+			auto factor = std::pow(0.85, dField.chains.size() - i);
+			irr::core::vector2di base_pos = Resize(1000, 50 + 32 * i);
+			base_pos.X -= 100;
+			irr::core::recti chain_rect = {{base_pos.X, base_pos.Y}, {base_pos.X + 96, base_pos.Y + 96}};
+			irr::core::recti number_rect = {{base_pos.X + 24, base_pos.Y + 24}, {base_pos.X + 48 + 24, base_pos.Y + 48 + 24}};
+			irr::core::vector2di center = {base_pos.X + 48, base_pos.Y + 48};
+			irr::core::vector2df scale = {0.75f, 0.75f};
 
-		colors[0] = irr::video::SColor{
-			matManager.mTRTexture.AmbientColor.getAlpha(),
-			static_cast<irr::u32>(matManager.mTRTexture.AmbientColor.getRed() * factor),
-			static_cast<irr::u32>(matManager.mTRTexture.AmbientColor.getGreen() * factor),
-			static_cast<irr::u32>(matManager.mTRTexture.AmbientColor.getBlue() * factor)
-		};
-		colors[1] = colors[0];
-		colors[2] = colors[0];
-		colors[3] = colors[0];
-		irr::gui::Draw2DImageRotation(driver, imageManager.tChain, {{0, 0}, {128, 128}}, chain_rect.UpperLeftCorner, center, act_rot * 180 / irr::core::PI, scale, true, colors[0]);
-		driver->draw2DImage(
-			imageManager.tNumber,
-			number_rect,
-			irr::core::rect<irr::s32>{{
-				static_cast<int>(64 * (i % 5)),
-				static_cast<int>(64 * (i / 5))}, {
-				static_cast<int>(64 * (i % 5) + 64),
-				static_cast<int>(64 * (i / 5) + 64)
-			}},
-			nullptr,
-			(const irr::video::SColor * const)&colors,
-			true
-		);
-	}
+			colors[0] = irr::video::SColor{
+				matManager.mTRTexture.AmbientColor.getAlpha(),
+				static_cast<irr::u32>(matManager.mTRTexture.AmbientColor.getRed() * factor),
+				static_cast<irr::u32>(matManager.mTRTexture.AmbientColor.getGreen() * factor),
+				static_cast<irr::u32>(matManager.mTRTexture.AmbientColor.getBlue() * factor)
+			};
+			colors[1] = colors[0];
+			colors[2] = colors[0];
+			colors[3] = colors[0];
+			irr::gui::Draw2DImageRotation(driver, imageManager.tChain, {{0, 0}, {128, 128}}, chain_rect.UpperLeftCorner, center, act_rot * 180 / irr::core::PI, scale, true, colors[0]);
+			driver->draw2DImage(
+				imageManager.tNumber,
+				number_rect,
+				irr::core::rect<irr::s32>{{
+					static_cast<int>(64 * (i % 5)),
+					static_cast<int>(64 * (i / 5))}, {
+					static_cast<int>(64 * (i % 5) + 64),
+					static_cast<int>(64 * (i / 5) + 64)
+				}},
+				nullptr,
+				(const irr::video::SColor * const)&colors,
+				true
+			);
+		}
 	env->drawAll();
 }
 void Game::DrawSpec() {

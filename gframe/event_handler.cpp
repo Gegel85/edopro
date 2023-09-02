@@ -2013,6 +2013,10 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				gGameConfig->draw_field_spell = mainGame->gSettings.chkDrawFieldSpells->isChecked();
 				return true;
 			}
+			case CHECKBOX_DRAW_CHAIN_SEPARATELY: {
+				gGameConfig->draw_chain_separately = mainGame->gSettings.chkDrawChainSeparately->isChecked();
+				return true;
+			}
 			case CHECKBOX_FILTER_BOT: {
 				gGameConfig->filterBot = mainGame->gSettings.chkFilterBot->isChecked();
 				mainGame->gBot.Refresh(gGameConfig->filterBot * (mainGame->cbDuelRule->getSelected() + 1), gGameConfig->lastBot);
@@ -2521,7 +2525,7 @@ void ClientField::GetHoverField(const irr::core::vector2d<irr::s32>& mouse) {
 			}
 		}
 		hovered_location = 0;
-	} else if(CheckChains(mouse, mainGame->dField.chains.size())) {
+	} else if(gGameConfig->draw_chain_separately && CheckChains(mouse, mainGame->dField.chains.size())) {
 		auto pos = mainGame->Resize(mouse.X, mouse.Y, true);
 		unsigned index = (pos.Y - 50) / 32;
 
